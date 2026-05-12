@@ -1,21 +1,27 @@
-async function getNews() {
-    )
+'use client'
 
-    if (!res.ok) {
-      return []
+import { useEffect, useState } from 'react'
+
+export default function Home() {
+  const [news, setNews] = useState([])
+
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        const res = await fetch(
+          'https://hn.algolia.com/api/v1/search?query=AI'
+        )
+
+        const data = await res.json()
+
+        setNews(data.hits || [])
+      } catch (error) {
+        console.log(error)
+      }
     }
 
-    const data = await res.json()
-
-    return data.hits || []
-  } catch (error) {
-    console.log(error)
-    return []
-  }
-}
-
-export default async function Home() {
-  const news = await getNews()
+    fetchNews()
+  }, [])
 
   return (
     <div className="container">
@@ -43,7 +49,7 @@ export default async function Home() {
       </div>
 
       <div className="news">
-        {news.map((item, index) => (
+        {news.slice(0, 10).map((item, index) => (
           <div key={index} className="news-item">
             <h3>
               {item.title || item.story_title || 'AI 新闻'}
