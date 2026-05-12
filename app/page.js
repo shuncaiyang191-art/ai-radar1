@@ -1,13 +1,21 @@
 async function getNews() {
-  )
+    )
 
-  return res.json()
+    if (!res.ok) {
+      return []
+    }
+
+    const data = await res.json()
+
+    return data.hits || []
+  } catch (error) {
+    console.log(error)
+    return []
+  }
 }
 
 export default async function Home() {
-  const data = await getNews()
-
-  const news = data.hits.slice(0, 10)
+  const news = await getNews()
 
   return (
     <div className="container">
@@ -25,7 +33,7 @@ export default async function Home() {
 
         <div className="card">
           <h2>LIVE</h2>
-          <p>自动实时更新</p>
+          <p>自动更新</p>
         </div>
 
         <div className="card">
@@ -38,22 +46,25 @@ export default async function Home() {
         {news.map((item, index) => (
           <div key={index} className="news-item">
             <h3>
-              {item.title || 'AI 新闻更新'}
+              {item.title || item.story_title || 'AI 新闻'}
             </h3>
 
             <p>
-              来源：{item.author || 'AI Radar'}
+              作者：{item.author || 'AI Radar'}
             </p>
 
             <br />
 
-            <a
-              href={item.url}
-              target="_blank"
-              style={{ color: '#4ea1ff' }}
-            >
-              查看原文
-            </a>
+            {item.url && (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#4ea1ff' }}
+              >
+                查看原文
+              </a>
+            )}
           </div>
         ))}
       </div>
